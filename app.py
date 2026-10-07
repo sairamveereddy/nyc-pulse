@@ -130,41 +130,7 @@ h1, h2, h3, h4, h5, p, span, div {
 .pill.high { background: #C7F36B; color: #171923; }
 .pill.low { background: #FDE8E8; color: #9B1C1C; }
 
-/* Timeline */
-.timeline {
-    border-left: 2px solid #EAE7FF;
-    margin-left: 10px;
-    padding-left: 24px;
-}
-.timeline-item {
-    position: relative;
-    margin-bottom: 24px;
-    font-size: 0.9rem;
-    color: #171923;
-}
-.timeline-dot {
-    position: absolute;
-    left: -29px;
-    top: 4px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-}
-.dot-mistral { background: #485CFF; }
-.dot-elastic { background: #FFFFFF; border: 2px solid #485CFF; }
-.dot-semantic { background: #C7F36B; border: 2px solid #171923; }
-.dot-evidence { background: #171923; }
-.dot-done { background: #485CFF; }
 
-.timeline-title {
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-.timeline-meta {
-    font-size: 0.8rem;
-    color: #666;
-    font-family: monospace;
-}
 
 hr {
     border-color: #E5E5E5;
@@ -288,30 +254,23 @@ if analyze:
             with col_side:
                 st.markdown("<div class='eyebrow' style='margin-bottom:24px;'>INVESTIGATION ACTIVITY</div>", unsafe_allow_html=True)
                 
-                trace_html = '<div class="timeline">'
                 for t in trace:
                     step = t['step']
                     step_lower = step.lower()
-                    if 'mistral' in step_lower: dot = 'dot-mistral'
-                    elif 'semantic' in step_lower: dot = 'dot-semantic'
-                    elif 'elastic search' in step_lower or 'bm25' in step_lower or 'geo' in step_lower: dot = 'dot-elastic'
-                    elif 'verif' in step_lower or 'evidence' in step_lower: dot = 'dot-evidence'
-                    else: dot = 'dot-done'
                     
-                    meta = ""
+                    if 'mistral' in step_lower: icon = '🧠'
+                    elif 'semantic' in step_lower: icon = '✨'
+                    elif 'elastic search' in step_lower or 'bm25' in step_lower or 'geo' in step_lower: icon = '🔎'
+                    elif 'verif' in step_lower or 'evidence' in step_lower: icon = '⚖️'
+                    else: icon = '✅'
+                    
+                    st.markdown(f"**{icon} {step}**")
+                    
                     if 'args' in t:
-                        if 'query' in t['args']: meta = f"<div class='timeline-meta'>Q: {t['args']['query'][:40]}...</div>"
-                        elif 'location_name' in t['args']: meta = f"<div class='timeline-meta'>Loc: {t['args']['location_name']}</div>"
-                        
-                    trace_html += f"""
-                    <div class="timeline-item">
-                        <div class="timeline-dot {dot}"></div>
-                        <div class="timeline-title">{step}</div>
-                        {meta}
-                    </div>
-                    """
-                trace_html += '</div>'
-                st.markdown(trace_html, unsafe_allow_html=True)
+                        if 'query' in t['args']: 
+                            st.caption(f"↳ Query: {t['args']['query'][:60]}...")
+                        elif 'location_name' in t['args']: 
+                            st.caption(f"↳ Loc: {t['args']['location_name']}")
 
             st.markdown("<hr>", unsafe_allow_html=True)
             
